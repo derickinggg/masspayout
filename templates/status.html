@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Payout Status</title>
+    <style>
+      body { font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; margin: 40px; }
+      table { border-collapse: collapse; width: 100%; max-width: 860px; }
+      th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+      th { background: #f5f5f5; }
+      a { text-decoration: none; color: #0366d6; }
+      .header { display: flex; align-items: baseline; gap: 12px; }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Payout Status</h1>
+      <a href="/">Create another</a>
+    </div>
+
+    <p><strong>Batch ID:</strong> {{ batch_id }}</p>
+    {% if status and status.get('batch_header') %}
+      <p><strong>Batch Status:</strong> {{ status['batch_header'].get('batch_status') }}</p>
+      {% if status['batch_header'].get('amount') %}
+        <p><strong>Total:</strong> {{ status['batch_header']['amount'].get('value') }} {{ status['batch_header']['amount'].get('currency') }}</p>
+      {% endif %}
+    {% endif %}
+
+    {% if status and status.get('items') %}
+      <table>
+        <thead>
+          <tr>
+            <th>Item ID</th>
+            <th>Receiver</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in status['items'] %}
+            <tr>
+              <td>{{ item.get('payout_item_id') }}</td>
+              <td>{{ item.get('payout_item', {}).get('receiver') }}</td>
+              <td>{{ item.get('payout_item', {}).get('amount', {}).get('value') }} {{ item.get('payout_item', {}).get('amount', {}).get('currency') }}</td>
+              <td>{{ item.get('transaction_status') }}</td>
+              <td>
+                {% if item.get('links') %}
+                  {% for link in item['links'] %}
+                    {% if link.get('rel') == 'item' %}
+                      <a href="{{ link.get('href') }}" target="_blank">View</a>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <pre>{{ status | tojson(indent=2) }}</pre>
+    {% endif %}
+  </body>
+  </html>
+
+

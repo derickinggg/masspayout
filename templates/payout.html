@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create Payout</title>
+    <style>
+      body { font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; margin: 40px; }
+      form { max-width: 520px; }
+      label { display: block; margin-top: 12px; font-weight: 600; }
+      input, textarea, select { width: 100%; padding: 8px; margin-top: 6px; }
+      button { margin-top: 16px; padding: 10px 16px; }
+      .flash { padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+      .flash.error { background: #fdecea; color: #a30000; }
+      .flash.warning { background: #fff4e5; color: #7a4b00; }
+      .flash.success { background: #edf7ed; color: #1e4620; }
+    </style>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h1>Create PayPal Payout</h1>
+    <form action="{{ url_for('create_payout_route') }}" method="post">
+      <fieldset>
+        <legend>PayPal Credentials</legend>
+        {% if has_session_creds %}
+          <div class="flash success">Using credentials saved in this session.</div>
+        {% endif %}
+        <label for="client_id">Client ID</label>
+        <input id="client_id" name="client_id" type="text" placeholder="Enter PayPal Client ID" />
+
+        <label for="client_secret">Client Secret</label>
+        <input id="client_secret" name="client_secret" type="password" placeholder="Enter PayPal Client Secret" />
+      </fieldset>
+
+      <label for="email">Recipient Email</label>
+      <input id="email" name="email" type="email" value="{{ default_email }}" required />
+
+      <label for="amounts">Amounts (comma or newline separated)</label>
+      <textarea id="amounts" name="amounts" rows="3" placeholder="44.99, 38.99" required></textarea>
+
+      <label for="currency">Currency</label>
+      <select id="currency" name="currency">
+        <option value="USD" selected>USD</option>
+      </select>
+
+      <label for="subject">Email Subject</label>
+      <input id="subject" name="subject" type="text" value="You have money!" />
+
+      <label for="message">Email Message</label>
+      <textarea id="message" name="message" rows="3">You received a payment. Thanks for using our service!</textarea>
+
+      <button type="submit">Send Payout</button>
+    </form>
+  </body>
+  </html>
+
+

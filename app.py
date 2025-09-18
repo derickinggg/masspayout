@@ -48,8 +48,12 @@ def build_payout_body(email: str, amounts: List[str], currency: str, subject: st
   }
 
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 def create_app() -> Flask:
-  app = Flask(__name__)
+  # Explicitly set template_folder to ensure Jinja finds templates on Vercel
+  app = Flask(__name__, template_folder=os.path.join(BASE_DIR, "templates"))
   app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(16))
 
   @app.get("/")

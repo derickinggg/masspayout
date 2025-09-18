@@ -13,8 +13,4 @@ from app import create_app
 # Export WSGI app for Vercel
 app = create_app()
 
-# Optional handler (not required but harmless)
-def handler(request, response):
-  return app(request.environ, response.start_response)
-
 

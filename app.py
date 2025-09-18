@@ -62,6 +62,10 @@ def create_app() -> Flask:
     has_session_creds = bool(session.get("paypal_client_id") and session.get("paypal_client_secret"))
     return render_template("payout.html", default_email=default_email, has_session_creds=has_session_creds)
 
+  @app.get("/health")
+  def health():
+    return {"status": "ok"}, 200
+
   @app.post("/payout")
   def create_payout_route():
     try:
